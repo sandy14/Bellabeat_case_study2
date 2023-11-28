@@ -33,5 +33,50 @@ We will analyze smart device usage data in order to gain insight into how consum
 
 
 #Prepare#
+.FitBit Fitness Tracker Data (CC0: Public Domain, dataset made available through Mobius): This Kaggle data set contains personal fitness tracker from thirty fitbit users.
+.Thirty eligible Fitbit users consented to the submission of personal tracker data, including minute-level output for physical activity, heart rate, and sleep monitoring. It includes information about daily activity, steps, and heart rate that can be used to explore users’ habits.
+.Data time frame: Apr 12'2016 - May 12'2016
+
+#Data Analysis in R#
+install.packages("tidyverse")
+library(tidyverse)
+
+#Create dataframe for daily_activity and daily sleep#
+dailyActivity_merged <- read_csv("dailyActivity_merged.csv")
+daily_sleep <- read_csv("sleepDay_merged.csv")
+
+#Explore data#
+n_distinct(dailyActivity_merged)
+n_distinct(daily_sleep)
+
+nrow(dailyActivity_merged)
+nrow(daily_sleep)
+
+head(dailyActivity_merged)
+head(daily_sleep)
+
+colnames(dailyActivity_merged)
+colnames(daily_sleep)
+
+#short summary#
+dailyActivity_merged %>%
+  select(TotalSteps,Calories,TotalDistance,SedentaryMinutes)%>%
+  summary()
+
+daily_sleep%>%
+  select(TotalSleepRecords,TotalMinutesAsleep,TotalTimeInBed)%>%
+  summary()
+
+#Plotting to check relation in data#
+ggplot(data = dailyActivity_merged,aes(x=TotalSteps, y=Calories)) +geom_point()
+ggplot(data= dailyActivity_merged,aes(x=TotalDistance,y=SedentaryMinutes ))+geom_point()
+
+#Merging datasets#
+
+combined_data <- merge(dailyActivity_merged,daily_sleep,by="Id")
+colnames(combined_data)
+
+ggplot(data=combined_data,aes(x=Calories,y=TotalMinutesAsleep))+geom_point()
+
 
 
