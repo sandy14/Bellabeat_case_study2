@@ -38,45 +38,124 @@ We will analyze smart device usage data in order to gain insight into how consum
 .Data time frame: Apr 12'2016 - May 12'2016
 
 #Data Analysis in R#
+
 install.packages("tidyverse")
 library(tidyverse)
+install.packages("tidyr")
+install.packages("lubridate")
+install.packages("dplyr")
+install.packages("ggplot2")
+library(tidyverse)
+library(tidyr)
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+install.packages("janitor")
+library(janitor)
 
-#Create dataframe for daily_activity and daily sleep#
-dailyActivity_merged <- read_csv("dailyActivity_merged.csv")
-daily_sleep <- read_csv("sleepDay_merged.csv")
 
-#Explore data#
-n_distinct(dailyActivity_merged)
-n_distinct(daily_sleep)
+#Import dataset using CSV files#
+
+
+dailyActivity <- read.csv("dailyActivity_merged.csv")
+
+#Get the directory#
+getwd()
+daily_sleep <- read.csv("dailySleep_merged.csv")
+daily_Intensities <- read.csv("dailyIntensities_merged.csv")
+Hourly_steps <- read.csv("hourlySteps_merged.csv")
+Hourly_intensity <- read.csv("hourlyIntensities_merged.csv")
+Hourly_calories <- read.csv("hourlyCalories_merged.csv")
+weight <- read.csv("weightLogInfo_merged.csv")
+
+#Preview of datasets #
+head(dailyActivity_merged)
+head(Hourly_steps)
+head(Hourly_intensity)
+head(Hourly_calories)
+head(weight)
+
+colnames(dailyActivity_merged)
+str(dailyActivity_merged)
+
+#process data #
+
+#Explore data  to find dintinct values#
+  
+n_distinct(dailyActivity_merged$Id)
+n_distinct(daily_sleep$Id)
+n_distinct(Hourly_steps$Id)
 
 nrow(dailyActivity_merged)
 nrow(daily_sleep)
 
-head(dailyActivity_merged)
-head(daily_sleep)
 
 colnames(dailyActivity_merged)
 colnames(daily_sleep)
 
-#short summary#
-dailyActivity_merged %>%
-  select(TotalSteps,Calories,TotalDistance,SedentaryMinutes)%>%
-  summary()
 
-daily_sleep%>%
-  select(TotalSleepRecords,TotalMinutesAsleep,TotalTimeInBed)%>%
-  summary()
+#Counting duplicated rows in data frame#
 
-#Plotting to check relation in data#
-ggplot(data = dailyActivity_merged,aes(x=TotalSteps, y=Calories)) +geom_point()
-ggplot(data= dailyActivity_merged,aes(x=TotalDistance,y=SedentaryMinutes ))+geom_point()
+sum(duplicated(dailyActivity_merged))
+sum(duplicated(daily_Intensities))
+sum(duplicated(Hourly_steps))
+sum(duplicated(daily_sleep))
 
-#Merging datasets#
+#remove duplicate values and NA#
+daily_sleep <- daily_sleep%>%
+  distinct()%>%
+  drop_na()
 
-combined_data <- merge(dailyActivity_merged,daily_sleep,by="Id")
-colnames(combined_data)
+dailyActivity<- dailyActivity_merged %>%
+  distinct()%>%
+  drop_na()
 
-ggplot(data=combined_data,aes(x=Calories,y=TotalMinutesAsleep))+geom_point()
+Hourly_steps <- Hourly_steps%>%
+  distinct()%>%
+  drop_na()
+
+daily_Intensities <- daily_Intensities%>%
+  distinct()%>%
+  drop_na()
+
+#varifying duplicate has been removed#
+
+sum(duplicated(daily_sleep))
+str(daily_sleep)
+head(daily_sleep)
+
+#Changing date-time format in dailyActivity  to merge based on date #
+
+dailyActivity_new <- dailyActivity %>%
+  mutate(date_new= as_date(mdy(ActivityDate)))
+head(dailyActivity_new)  
+head(daily_sleep)
+
+
+#changing date time format in daily_sleep #
+daily_sleep$SleepDay <- as.POSIXct(daily_sleep$SleepDay,format="%m/%d/%Y %I:%M:%S %p",tz=Sys.timezone())
+head(daily_sleep)
+daily_sleep_NEW <- daily_sleep %>%
+  mutate(date_new=SleepDay)
+head(daily_sleep_NEW)
+
+#Converting ActivityHour from chr to datetime format#
+
+str(Hourly_steps)
+Hourly_steps <- Hourly_steps %>%
+  rename(datetime= ActivityHour)%>%
+  mutate(datetime= as.POSIXct(datetime,format= "%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone()))
+head(Hourly_steps)
+
+
+#Merging dailyActivity_new and daily_sleep_NEW#
+
+dailyActivity_sleep <- merge(dailyActivity_new,daily_sleep_NEW, by=c("Id","date_new"))
+glimpse(dailyActivity_sleep)
+
+
+
+
 
 
 
