@@ -154,6 +154,37 @@ dailyActivity_sleep <- merge(dailyActivity_new,daily_sleep_NEW, by=c("Id","date_
 glimpse(dailyActivity_sleep)
 
 
+#categorizing users in categories #
+Daily_use <- dailyActivity_sleep %>%
+  group_by(Id)%>%
+  summarise(days_used=sum(n()))%>%
+  mutate(usage= case_when(days_used >=1  &  days_used <=10 ~"Passive_user",
+                          days_used >11 &  days_used<=20 ~"Moderate_user",
+                          days_used  >21 & days_used <=31 ~ "Active_user"))
+head(Daily_use)
+
+
+#Create a dataframe to calculate % of users #
+
+Daily_use_Percentage <- Daily_use %>%
+  group_by(usage) %>%
+  summarise(total=(n()))%>%
+  mutate(totals =sum(total))%>%
+  group_by(usage)%>%
+  summarise(Percentage=((total/totals)*100))
+
+head(Daily_use_Percentage)  
+
+#Create a Pie chart to show usres based on smart devices usage#
+
+ggplot(Daily_use_Percentage,aes(x="",y=Percentage,fill=usage))+
+  geom_bar(stat = "identity",width = 1)+
+  coord_polar("y")+
+  ggtitle("Pie chart based on no. of days smart devices used")+
+  theme_minimal()+
+  geom_text(aes(label=Percentage),position = position_stack(vjust=.05))
+
+
 
 
 
