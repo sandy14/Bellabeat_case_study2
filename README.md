@@ -185,6 +185,51 @@ ggplot(Daily_use_Percentage,aes(x="",y=Percentage,fill=usage))+
   geom_text(aes(label=Percentage),position = position_stack(vjust=.05))
 
 
+ #Insight- No of Active and Passive users are more than moderate users#
+  
+  # categorize people based on activity level-as totalsteps taken #
+  #Sedentary - Less than 5000 steps a day.
+  #Lightly active - Between 5000 and 7499 steps a day.
+  #Fairly active - Between 7500 and 9999 steps a day.
+  #Very active - More than 10000 steps a day.
+  
+  Active_per_Totalstpes <- daily_activity_summary%>%
+    group_by(Id)%>%
+    mutate(user=case_when(Avg_steps < 5000 ~ "Sedentary",
+                          Avg_steps >=5000 & Avg_steps <=7499 ~"Lightly_active",
+                          Avg_steps >=7500 & Avg_steps <= 9999 ~ "Moderate_active",
+                          Avg_steps >=10000 ~ "Very_active"))
+  view(Active_per_Totalstpes)
+  
+  
+  #Create a dataframe to calculate % of users based on Avg steps taken #
+  
+  Active_percentage <-Active_per_Totalstpes %>%
+    group_by(user) %>%
+    summarise(total=(n()))%>%
+    mutate(totals =sum(total))%>%
+    group_by(user)%>%
+    summarise(Percentage=((total/totals)))%>%
+    mutate(labels = scales::percent(Percentage))
+
+  #Create a Pie chart to show usres based on Avg stpes taken#
+  
+  Active_percentage %>%
+    ggplot(aes(x="",y=Percentage,fill=user))+
+    geom_bar(stat = "identity",width = 1)+
+    coord_polar("y")+
+    ggtitle("Pie chart based on Avg steps taken")+
+    theme_minimal()+
+    theme(axis.title.x= element_blank(),
+          axis.title.y = element_blank(),
+          axis.ticks = element_blank(),
+          panel.grid = element_blank(), 
+          plot.title = element_text(hjust = 0.5, size=14, face = "bold"),
+          axis.text.x = element_blank())+
+    geom_text(aes(label = labels),position = position_stack(vjust = 0.5))
+  
+
+
 
 
 
