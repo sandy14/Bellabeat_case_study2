@@ -187,7 +187,8 @@ ggplot(Daily_use_Percentage,aes(x="",y=Percentage,fill=usage))+
 
  #Insight- No of Active and Passive users are more than moderate users#
   
-  # categorize people based on activity level-as totalsteps taken #
+
+  #categorize people based on number of  Avg steps taken#
   #Sedentary - Less than 5000 steps a day.
   #Lightly active - Between 5000 and 7499 steps a day.
   #Fairly active - Between 7500 and 9999 steps a day.
