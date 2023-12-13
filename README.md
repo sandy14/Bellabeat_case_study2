@@ -153,6 +153,9 @@ head(Hourly_steps)
 dailyActivity_sleep <- merge(dailyActivity_new,daily_sleep_NEW, by=c("Id","date_new"))
 glimpse(dailyActivity_sleep)
 
+#Insight from above analysis#
+1.
+
 
 #categorizing users in categories #
 Daily_use <- dailyActivity_sleep %>%
@@ -229,7 +232,66 @@ ggplot(Daily_use_Percentage,aes(x="",y=Percentage,fill=usage))+
           axis.text.x = element_blank())+
     geom_text(aes(label = labels),position = position_stack(vjust = 0.5))
   
+ #Comparison between Total steps and Total calories taken#
+  
+  ggplot(daily_activity_summary,aes(x=Avg_steps,y=Avg_calories))+geom_smooth()+labs(title="Avg_steps VS Avg_calories taken")
 
+ #Max step taken on which weekday? #
+  
+  Weekday_activity <- dailyActivity_sleep %>%
+    mutate(Weekday=weekdays(as.Date(date_new)))
+    
+ #Sort the weekday#
+  
+  Weekday_activity$Weekday <-factor(Weekday_activity$Weekday,levels=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
+  
+  ggplot(Weekday_activity,aes(x=Weekday,y=TotalSteps))+geom_bar(stat = "identity",fill="blue")+
+    labs(title="Weekday Activity")
+
+#On which day of week people are sleeping more?#
+  
+  ggplot(Weekday_activity,aes(x=Weekday,y=TotalTimeInBed))+geom_bar(stat="identity",fill="blue")+
+    labs("Weekday sleep activity")
+  
+    
+  
+  #Insights from above analysis#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+  
 
 
 
