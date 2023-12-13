@@ -258,6 +258,15 @@ ggplot(Daily_use_Percentage,aes(x="",y=Percentage,fill=usage))+
   #Insights from above analysis#
 
 
+1.As 37.5 % users are using devices moderately and not login more than 20 days.Some reminder could be set for them.Introduction of daily score could encourage users to use devices daily.
+2.For people who are walking less than 5000 steps , notification colud be sent.To remimd that they were not active for today and can reset tommorow.
+3.People who are sleeping between 6-8 hours daily,their calories consumption is good.Where people who are sleeping for 8-10 hour ,their calories consumption is less then 2000.Further investigation can be done on this.
+4.People who are walking more than 11000 steps ,they are buring more calories.
+5.Apart from Monday ,prople are sleepling almost for equal amount of time.
+
+
+
+
 
 
 
